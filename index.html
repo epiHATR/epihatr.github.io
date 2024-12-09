@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BluecyLabs - WebFlash</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        /* Custom styles for active menu item */
+        .navbar-nav>.active>a {
+            background-color: black !important;
+            color: white !important;
+        }
+
+        /* Hide all sections initially */
+        .content-section {
+            display: none;
+        }
+
+        /* Ensure footer sticks to the bottom */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        /* Main content area adjustment */
+        pre {
+            margin-top: 20px;
+            text-align: left;
+            padding: 10px;
+            background-color: black;
+            color: white;
+            border: 1px solid #ddd;
+            height: 500px;
+            overflow-y: auto;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            background-color: #f8f8f8;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .btn-success,
+        .btn-danger {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .reset-btn-container .btn {
+            margin-left: 20px;
+        }
+
+        /* Adjust width of reset button to match Baud Rate select box */
+        .reset-btn-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .reset-btn-container #resetBtn2 {
+            width: 80px;
+            /* Smaller reset button */
+        }
+
+        .reset-btn-container #resetBtn1 {
+            width: 80px;
+            /* Smaller reset button */
+        }
+
+        /* Make Send Command input match output width */
+        .send-command-container {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <!-- Brand -->
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">BluecyLabs</a>
+            </div>
+            <!-- Menu Items -->
+            <ul class="nav navbar-nav">
+                <li id="rtl8720dnTab" class="active"><a href="#">RTL8720DN BW16</a></li>
+                <li id="bluetoothJammerTab"><a href="#">Bluetooth Jammer</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- RTL8720DN BW16 Section -->
+        <div id="rtl8720dnSection" class="content-section" style="display: block;">
+            <header class="page-header">
+                <h1>BluecyLabs <small>- RTL8720DN BW16</small></h1>
+            </header>
+            <div class="jumbotron text-center">
+                <div class="form-inline" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div class="form-group">
+                        <label for="baudRateSelect1">Baud Rate:</label>
+                        <select id="baudRateSelect1" class="form-control" style="width: auto;">
+                            <option value="9600">9600</option>
+                            <option value="19200">19200</option>
+                            <option value="38400">38400</option>
+                            <option value="57600">57600</option>
+                            <option value="115200" selected>115200</option>
+                        </select>
+                    </div>
+                    <div class="reset-btn-container">
+                        <button id="connectBtn1" class="btn btn-primary" style="margin-bottom: 10px;">Connect To
+                            Device</button>
+                        <button id="resetBtn1" class="btn btn-danger" style="display: none;">
+                            <span class="glyphicon glyphicon-off"></span> Reset
+                        </button>
+                    </div>
+                </div>
+                <input type="text" id="sendCommand1" class="send-command-container" placeholder="Send Command">
+                <pre id="output1">Not connected</pre>
+            </div>
+        </div>
+
+        <!-- Bluetooth Jammer Section -->
+        <div id="bluetoothJammerSection" class="content-section">
+            <header class="page-header">
+                <h1>BluecyLabs <small>- Bluetooth Jammer</small></h1>
+            </header>
+            <div class="jumbotron text-center">
+                <div class="form-inline" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div class="form-group">
+                        <label for="baudRateSelect2">Baud Rate:</label>
+                        <select id="baudRateSelect2" class="form-control" style="width: auto;">
+                            <option value="9600">9600</option>
+                            <option value="19200">19200</option>
+                            <option value="38400">38400</option>
+                            <option value="57600">57600</option>
+                            <option value="115200" selected>115200</option>
+                        </select>
+                    </div>
+                    <div class="reset-btn-container">
+                        <button id="connectBtn2" class="btn btn-primary" style="margin-bottom: 10px;">Connect To
+                            Device</button>
+                        <button id="resetBtn2" class="btn btn-danger" style="display: none;">
+                            <span class="glyphicon glyphicon-off"></span> Reset
+                        </button>
+                    </div>
+                </div>
+                <input type="text" id="sendCommand2" class="send-command-container" placeholder="Send Command">
+                <pre id="output2">Not connected</pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <footer class="footer text-center">
+            <p>&copy; 2024 BluecyLabs. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        const rtl8720dnTab = document.getElementById('rtl8720dnTab');
+        const bluetoothJammerTab = document.getElementById('bluetoothJammerTab');
+        const rtl8720dnSection = document.getElementById('rtl8720dnSection');
+        const bluetoothJammerSection = document.getElementById('bluetoothJammerSection');
+
+        rtl8720dnTab.addEventListener('click', () => setActiveTab(rtl8720dnTab, rtl8720dnSection));
+        bluetoothJammerTab.addEventListener('click', () => setActiveTab(bluetoothJammerTab, bluetoothJammerSection));
+
+        function setActiveTab(activeTab, activeSection) {
+            rtl8720dnTab.classList.remove('active');
+            bluetoothJammerTab.classList.remove('active');
+            rtl8720dnSection.style.display = 'none';
+            bluetoothJammerSection.style.display = 'none';
+            activeTab.classList.add('active');
+            activeSection.style.display = 'block';
+        }
+
+        async function resetBoard(port) {
+            try {
+                if (!port) {
+                    console.log("Port is not connected.");
+                    return;
+                }
+
+                // Access the control signals
+                const signals = await port.getSignals();
+                console.log("Initial signals:", signals);
+
+                // Deactivate DTR
+                await port.setSignals({ dataTerminalReady: false });
+                console.log("DTR set to false (inactive).");
+
+                // Wait briefly
+                await new Promise(resolve => setTimeout(resolve, 100));
+
+                // Reactivate DTR
+                await port.setSignals({ dataTerminalReady: true });
+                console.log("DTR set to true (active).");
+            } catch (error) {
+                console.error("Error toggling DTR:", error.message);
+            }
+        }
+
+
+        let port1 = null, port2 = null;
+
+        const sections = [
+            { connectBtn: 'connectBtn1', resetBtn: 'resetBtn1', baudRate: 'baudRateSelect1', output: 'output1', sendCommand: 'sendCommand1', portRef: 'port1' },
+            { connectBtn: 'connectBtn2', resetBtn: 'resetBtn2', baudRate: 'baudRateSelect2', output: 'output2', sendCommand: 'sendCommand2', portRef: 'port2' }
+        ];
+
+        sections.forEach(({ connectBtn, resetBtn, baudRate, output, sendCommand, portRef }) => {
+            const connectButton = document.getElementById(connectBtn);
+            const resetButton = document.getElementById(resetBtn);
+            const baudRateSelect = document.getElementById(baudRate);
+            const outputElement = document.getElementById(output);
+            const sendCommandInput = document.getElementById(sendCommand);
+
+            connectButton.addEventListener('click', async () => {
+                try {
+                    const selectedBaudRate = parseInt(baudRateSelect.value, 10);
+
+                    const port = await navigator.serial.requestPort();
+                    await port.open({ baudRate: selectedBaudRate });
+
+                    // Display port information
+                    const portInfo = await port.getInfo();
+                    outputElement.textContent = `Connected to port: ${portInfo.usbVendorId}:${portInfo.usbProductId} with baud rate ${selectedBaudRate}. Waiting for data...\n`;
+
+                    connectButton.textContent = 'Connected';
+                    connectButton.classList.remove('btn-primary');
+                    connectButton.classList.add('btn-success');
+
+                    resetButton.style.display = 'inline-block';
+
+                    if (portRef === 'port1') {
+                        port1 = port;
+                    } else if (portRef === 'port2') {
+                        port2 = port;
+                    }
+
+                    const textDecoder = new TextDecoderStream();
+                    const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
+                    const reader = textDecoder.readable.getReader();
+
+                    while (true) {
+                        const { value, done } = await reader.read();
+                        if (done) break;
+                        outputElement.textContent += value;
+                        outputElement.scrollTop = outputElement.scrollHeight;
+                    }
+
+                    reader.releaseLock();
+                } catch (error) {
+                    outputElement.textContent = "Not connected. Error: " + error.message;
+                    connectButton.textContent = 'Connect To Device';
+                    connectButton.classList.remove('btn-success');
+                    connectButton.classList.add('btn-primary');
+                    resetButton.style.display = 'none';
+                }
+            });
+
+            resetButton.addEventListener('click', async () => {
+                const currentPort = portRef === 'port1' ? port1 : port2;
+
+                if (!currentPort) {
+                    outputElement.textContent = "Not connected.";
+                    return;
+                }
+
+                try {
+                    await resetBoard(currentPort);
+                    const writer = currentPort.writable.getWriter();
+                    writer.releaseLock();
+                    outputElement.textContent += "Reset signal sent.\n";
+                } catch (error) {
+                    outputElement.textContent += `Error resetting: ${error.message}\n`;
+                }
+            });
+
+            sendCommandInput.addEventListener('keydown', async (e) => {
+                if (e.key === 'Enter') {
+                    const currentPort = portRef === 'port1' ? port1 : port2;
+
+                    if (!currentPort) {
+                        outputElement.textContent = "Not connected.";
+                        return;
+                    }
+
+                    const command = sendCommandInput.value.trim();
+                    if (command) {
+                        try {
+                            const writer = currentPort.writable.getWriter();
+                            writer.write(new TextEncoder().encode(command));
+                            writer.releaseLock();
+                            outputElement.textContent += `Sent command: ${command}\n`;
+                            sendCommandInput.value = '';
+                        } catch (error) {
+                            outputElement.textContent += `Error sending command: ${error.message}\n`;
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
